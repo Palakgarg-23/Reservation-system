@@ -1,0 +1,89 @@
+// Language Used : C++ 
+// Features Implemented : Reserve seats, Display seats
+
+#include <bits/stdc++.h>
+using namespace std;
+
+const int ROW_SIZE = 7;
+const int TOTAL_SEATS = 80;
+const int LAST_ROW_SIZE = 3;
+
+class TrainSeat {
+public:
+    bool is_reserved;
+    TrainSeat() {
+        is_reserved = false;
+    }
+};
+
+class TrainCoach {
+public:
+    vector<vector<TrainSeat>> seats;
+    TrainCoach() {
+        for (int i = 0; i < TOTAL_SEATS / ROW_SIZE - 1; i++) {
+            vector<TrainSeat> row(ROW_SIZE);
+            seats.push_back(row);
+        }
+        vector<TrainSeat> last_row(LAST_ROW_SIZE);
+        seats.push_back(last_row);
+    }
+
+    void reserve_seats(int num_seats) {
+        int num_reserved = 0;
+        for (int i = 0; i < seats.size(); i++) {
+            int j;
+            for (j = 0; j < seats[i].size(); j++) {
+                if (!seats[i][j].is_reserved) {
+                    int k = j;
+                    for (; k < j + num_seats && k < seats[i].size(); k++) {
+                        if (seats[i][k].is_reserved) {
+                            break;
+                        }
+                    }
+                    if (k == j + num_seats) {
+                        for (int l = j; l < k; l++) {
+                            seats[i][l].is_reserved = true;
+                        }
+                        num_reserved += num_seats;
+                        cout << "Booked seats: ";
+                        for (int l = j; l < k; l++) {
+                            cout << i * ROW_SIZE + l + 1 << " ";
+                        }
+                        cout << endl;
+                    }
+                }
+                if (num_reserved == num_seats) {
+                    return;
+                }
+            }
+        }
+        if (num_reserved < num_seats) {
+            cout << "Seats not available." << endl;
+        }
+    }
+
+    void print_seats() {
+        cout << "Available seats : 0, Reserved seats : 1." << endl;
+        for (int i = 0; i < seats.size(); i++) {
+            for (int j = 0; j < seats[i].size(); j++) {
+                cout << seats[i][j].is_reserved << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    TrainCoach coach;
+    int num_seats;
+    while (true) {
+        cout << "Enter the number of seats to book(0 to exit): ";
+        cin >> num_seats;
+        if (num_seats == 0) {
+            break;
+        }
+        coach.reserve_seats(num_seats);
+        coach.print_seats();
+    }
+    return 0;
+}
